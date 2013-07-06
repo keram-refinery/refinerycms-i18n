@@ -32,7 +32,7 @@ module Refinery
           :el => 'Ελληνικά',
           :rs => 'Srpski',
           :cs => 'Česky',
-          :sk => 'Slovenský',
+          :sk => 'Slovensky',
           :ja => '日本語',
           :bg => 'Български',
           :hu => 'Hungarian',
@@ -40,23 +40,10 @@ module Refinery
         }
       end
 
-      def current_frontend_locale
-        if Globalize.locale.present? && Globalize.locale.to_s != config.default_frontend_locale.to_s
-          Globalize.locale
-        elsif config.default_frontend_locale.present?
-          config.default_frontend_locale
-        else
-          ::I18n.locale
-        end
-      end
-
       def url_filter_enabled?
         config.url_filter_enabled
       end
 
-      def has_locale?(locale)
-        config.locales.has_key?(locale.try(:to_sym))
-      end
     end
 
     require 'refinery/i18n/engine'

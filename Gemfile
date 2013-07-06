@@ -2,72 +2,46 @@ source 'https://rubygems.org'
 
 gemspec
 
-git 'git://github.com/refinery/refinerycms.git' do
-  gem 'refinerycms'
+gem 'refinerycms', '~> 3.0.0.dev', :git => 'git://github.com/keram-refinery/refinerycms.git', :branch => 'refinery_light'
 
-  group :development, :test do
-    gem 'refinerycms-testing'
-  end
-end
+gem 'rails-i18n', '~> 0.7.4', :git => 'git://github.com/svenfuchs/rails-i18n.git', :branch => 'rails-4-x'
+gem 'routing-filter', '~> 0.3.1', :git => 'git://github.com/svenfuchs/routing-filter.git', :branch => 'master'
 
-group :development, :test do
-  require 'rbconfig'
-
-  # Database Configuration
-  unless ENV['TRAVIS']
-    gem 'activerecord-jdbcsqlite3-adapter', :platform => :jruby
-    gem 'sqlite3', :platform => :ruby
-  end
-
-  if !ENV['TRAVIS'] || ENV['DB'] == 'mysql'
-    gem 'activerecord-jdbcmysql-adapter', :platform => :jruby
-    gem 'jdbc-mysql', '= 5.1.13', :platform => :jruby
-    gem 'mysql2', :platform => :ruby
-  end
-
-  if !ENV['TRAVIS'] || ENV['DB'] == 'postgresql'
-    gem 'activerecord-jdbcpostgresql-adapter', :platform => :jruby
-    gem 'pg', :platform => :ruby
-  end
+group :test do
+  gem 'refinerycms-testing'
+  gem 'guard-rspec', '~> 3.0.2'
 
   platforms :mswin, :mingw do
-    gem 'win32console'
+    gem 'win32console', '~> 1.3.0'
     gem 'rb-fchange', '~> 0.0.5'
     gem 'rb-notifu', '~> 0.0.4'
   end
 
   platforms :ruby do
     unless ENV['TRAVIS']
-      if RbConfig::CONFIG['target_os'] =~ /darwin/i
-        gem 'rb-fsevent', '>= 0.3.9'
-        gem 'growl',      '~> 1.0.3'
+      require 'rbconfig'
+      if /darwin/i === RbConfig::CONFIG['target_os']
+        gem 'rb-fsevent', '~> 0.9.0'
+        gem 'ruby_gntp', '~> 0.3.4'
       end
-      if RbConfig::CONFIG['target_os'] =~ /linux/i
-        gem 'rb-inotify', '>= 0.5.1'
-        gem 'libnotify',  '~> 0.1.3'
-        gem 'therubyracer', '~> 0.9.9'
+      if /linux/i === RbConfig::CONFIG['target_os']
+        gem 'rb-inotify', '~> 0.9.0'
+        gem 'libnotify',  '~> 0.8.1'
+        gem 'therubyracer', '~> 0.11.4'
       end
     end
   end
 
   platforms :jruby do
     unless ENV['TRAVIS']
-      if RbConfig::CONFIG['target_os'] =~ /darwin/i
-        gem 'growl',      '~> 1.0.3'
+      require 'rbconfig'
+      if /darwin/i === RbConfig::CONFIG['target_os']
+        gem 'ruby_gntp', '~> 0.3.4'
       end
-      if RbConfig::CONFIG['target_os'] =~ /linux/i
-        gem 'rb-inotify', '>= 0.5.1'
-        gem 'libnotify',  '~> 0.1.3'
+      if /linux/i === RbConfig::CONFIG['target_os']
+        gem 'rb-inotify', '~> 0.9.0'
+        gem 'libnotify',  '~> 0.8.1'
       end
     end
   end
 end
-
-# Refinery/rails should pull in the proper versions of these
-group :assets do
-  gem 'sass-rails'
-  gem 'coffee-rails'
-  gem 'uglifier'
-end
-
-gem 'jquery-rails'
