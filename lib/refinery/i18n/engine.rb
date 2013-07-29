@@ -15,6 +15,10 @@ module Refinery
         end
       end
 
+      initializer 'register refinery_i18n stylesheets' do
+        Refinery::Core.config.register_admin_stylesheet('refinery/refinery-i18n')
+      end
+
       config.to_prepare do
         ::ApplicationController.module_eval do
 
