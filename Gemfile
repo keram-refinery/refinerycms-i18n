@@ -2,46 +2,33 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'refinerycms', '~> 3.0.0.dev', :git => 'git://github.com/keram-refinery/refinerycms.git', :branch => 'refinery_light'
+gem 'refinerycms', '~> 3.0.0.dev', :github => 'keram-refinery/refinerycms', :branch => 'refinery_light'
+gem 'refinerycms-testing', '~> 3.0.0.dev', :group => :test
 
-gem 'rails-i18n', '~> 0.7.4', :git => 'git://github.com/svenfuchs/rails-i18n.git', :branch => 'rails-4-x'
-gem 'routing-filter', '~> 0.3.1', :git => 'git://github.com/svenfuchs/routing-filter.git', :branch => 'master'
+# Database Configuration
+unless ENV['TRAVIS']
+  gem 'activerecord-jdbcsqlite3-adapter', :platform => :jruby
+  gem 'sqlite3', :platform => :ruby
+end
 
-group :test do
-  gem 'refinerycms-testing'
-  gem 'guard-rspec', '~> 3.0.2'
+if !ENV['TRAVIS'] || ENV['DB'] == 'mysql'
+  gem 'activerecord-jdbcmysql-adapter', :platform => :jruby
+  gem 'jdbc-mysql', '= 5.1.13', :platform => :jruby
+  gem 'mysql2', :platform => :ruby
+end
 
-  platforms :mswin, :mingw do
-    gem 'win32console', '~> 1.3.0'
-    gem 'rb-fchange', '~> 0.0.5'
-    gem 'rb-notifu', '~> 0.0.4'
-  end
+if !ENV['TRAVIS'] || ENV['DB'] == 'postgresql'
+  gem 'activerecord-jdbcpostgresql-adapter', :platform => :jruby
+  gem 'pg', :platform => :ruby
+end
 
-  platforms :ruby do
-    unless ENV['TRAVIS']
-      require 'rbconfig'
-      if /darwin/i === RbConfig::CONFIG['target_os']
-        gem 'rb-fsevent', '~> 0.9.0'
-        gem 'ruby_gntp', '~> 0.3.4'
-      end
-      if /linux/i === RbConfig::CONFIG['target_os']
-        gem 'rb-inotify', '~> 0.9.0'
-        gem 'libnotify',  '~> 0.8.1'
-        gem 'therubyracer', '~> 0.11.4'
-      end
-    end
-  end
+gem 'jruby-openssl', :platform => :jruby
 
-  platforms :jruby do
-    unless ENV['TRAVIS']
-      require 'rbconfig'
-      if /darwin/i === RbConfig::CONFIG['target_os']
-        gem 'ruby_gntp', '~> 0.3.4'
-      end
-      if /linux/i === RbConfig::CONFIG['target_os']
-        gem 'rb-inotify', '~> 0.9.0'
-        gem 'libnotify',  '~> 0.8.1'
-      end
-    end
-  end
+gem 'sass-rails'
+gem 'coffee-rails'
+gem 'uglifier'
+
+# Load local gems according to Refinery developer preference.
+if File.exist? local_gemfile = File.expand_path('../.gemfile', __FILE__)
+  eval File.read(local_gemfile)
 end
