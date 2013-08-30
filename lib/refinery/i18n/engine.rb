@@ -70,7 +70,7 @@ module Refinery
 
       initializer 'register refinery_i18n plugin' do
         ::Refinery::Plugin.register do |plugin|
-          plugin.name = 'refinery_i18n'
+          plugin.name = 'i18n'
           plugin.hide_from_menu = true
           plugin.always_allow_access = true
           plugin.pathname = root
