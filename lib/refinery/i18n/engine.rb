@@ -6,6 +6,11 @@ module Refinery
         require File.expand_path('../../translate', __FILE__)
       end
 
+      initializer 'store stringified locales keys' do
+        ::Refinery::I18n::FRONTEND_LOCALES_KEYS = ::Refinery::I18n.frontend_locales.map(&:to_s).freeze
+        ::Refinery::I18n::LOCALES_KEYS = ::Refinery::I18n.locales.keys.map(&:to_s).freeze
+      end
+
       initializer 'configure fallbacks' do
         if I18n.fallbacks_enabled
           require 'i18n/backend/fallbacks'
@@ -32,7 +37,7 @@ module Refinery
           def find_or_set_locale
             ::I18n.locale = if current_refinery_user
               current_refinery_user.locale
-            elsif I18n.locales.keys.include?(params[:locale])
+            elsif I18n::LOCALES_KEYS.include?(params[:locale].to_s)
               params[:locale]
             else
               I18n.default_locale
@@ -47,24 +52,22 @@ module Refinery
 
         ::Refinery::AdminController.class_eval do
           def find_or_set_locale
-            ::I18n.locale = current_refinery_user ? current_refinery_user.locale : I18n.default_locale
-            Globalize.locale = if params[:frontend_locale] =~ frontend_locales_rgxp
-              params.delete(:frontend_locale)
-            elsif ::I18n.locale =~ frontend_locales_rgxp
-              ::I18n.locale
+            if current_refinery_user
+              ::I18n.locale = current_refinery_user.locale
+              Globalize.locale = current_refinery_user.frontend_locale
             else
-              I18n.default_frontend_locale
-           end
-          end
+              ::I18n.locale = I18n.default_locale
+              Globalize.locale = I18n.default_frontend_locale
+            end
 
-          def frontend_locales_rgxp
-            @@frontend_locales_rgxp ||= %r{\A(#{I18n.frontend_locales.join('|')})\z}
+            if params[:frontend_locale].present? &&
+                        I18n::FRONTEND_LOCALES_KEYS.include?(params[:frontend_locale])
+              Globalize.locale = params.delete(:frontend_locale)
+            end
           end
 
           prepend_before_action :find_or_set_locale
           protected :find_or_set_locale
-          private :frontend_locales_rgxp
-
         end
       end
 
