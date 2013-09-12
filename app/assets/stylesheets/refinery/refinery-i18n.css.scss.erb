@@ -7,13 +7,13 @@
   background-color: transparent;
 }
 
+<% icons_path = [Refinery::I18n::Engine.root, 'app', 'assets', 'images', 'refinery', 'icons', 'flags'] %>
 <% Refinery::I18n.frontend_locales.each do |flag| %>
 .flag-<%= flag %> {
-  <% if flag.in?(Refinery::I18n.locales.keys) %>
+  <% if File.exists?(File.join(icons_path, "#{flag}.png")) %>
   background-image: image-url('<%= "refinery/icons/flags/#{flag}.png" %>');
   <% else %>
   background-image: image-url('refinery/icons/flags/missing.png');
   <% end %>
 }
 <% end %>
-

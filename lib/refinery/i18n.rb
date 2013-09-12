@@ -11,33 +11,7 @@ module Refinery
       attr_accessor :built_in_locales
 
       def built_in_locales
-        @built_in_locales ||= {
-          :en => 'English',
-          :fr => 'Français',
-          :nl => 'Nederlands',
-          :pt => 'Português',
-          :'pt-BR' => 'Português brasileiro',
-          :da => 'Dansk',
-          :nb => 'Norsk Bokmål',
-          :sl => 'Slovenian',
-          :es => 'Español',
-          :it => 'Italiano',
-          :de => 'Deutsch',
-          :lv => 'Latviski',
-          :ru => 'Русский',
-          :sv => 'Svenska',
-          :pl => 'Polski',
-          :'zh-CN' => '简体中文',
-          :'zh-TW' => '繁體中文',
-          :el => 'Ελληνικά',
-          :rs => 'Srpski',
-          :cs => 'Česky',
-          :sk => 'Slovensky',
-          :ja => '日本語',
-          :bg => 'Български',
-          :hu => 'Hungarian',
-          :uk => 'Українська'
-        }
+        @built_in_locales ||= %i(en fr nl pt pt-BR da nb sl es it de lv ru sv pl zh-CN zh-TW el rs cs sk ja bg hu uk)
       end
 
       def url_filter_enabled?

@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency    'routing-filter',   '~> 0.4.0.pre'
   s.add_dependency    'rails-i18n',       '~> 0.7.4'
+  s.add_dependency    'i18n-iso639matrix', '~> 0.0.1'
 end

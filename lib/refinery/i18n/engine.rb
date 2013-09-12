@@ -8,7 +8,7 @@ module Refinery
 
       initializer 'store stringified locales keys' do
         ::Refinery::I18n::FRONTEND_LOCALES_KEYS = ::Refinery::I18n.frontend_locales.map(&:to_s).freeze
-        ::Refinery::I18n::LOCALES_KEYS = ::Refinery::I18n.locales.keys.map(&:to_s).freeze
+        ::Refinery::I18n::LOCALES_KEYS = ::Refinery::I18n.locales.map(&:to_s).freeze
       end
 
       initializer 'configure fallbacks' do
@@ -35,15 +35,8 @@ module Refinery
           alias_method_chain :default_url_options, :locale
 
           def find_or_set_locale
-            ::I18n.locale = if current_refinery_user
-              current_refinery_user.locale
-            elsif I18n::LOCALES_KEYS.include?(params[:locale].to_s)
-              params[:locale]
-            else
-              I18n.default_locale
-            end
-
-            Globalize.locale = params[:locale]
+            Globalize.locale = ::I18n.locale
+            ::I18n.locale = current_refinery_user.locale if current_refinery_user
           end
 
           prepend_before_action :find_or_set_locale
@@ -52,18 +45,14 @@ module Refinery
 
         ::Refinery::AdminController.class_eval do
           def find_or_set_locale
+            ::I18n.locale = I18n.default_locale
+
             if current_refinery_user
               ::I18n.locale = current_refinery_user.locale
               Globalize.locale = current_refinery_user.frontend_locale
-            else
-              ::I18n.locale = I18n.default_locale
-              Globalize.locale = I18n.default_frontend_locale
             end
 
-            if params[:frontend_locale].present? &&
-                        I18n::FRONTEND_LOCALES_KEYS.include?(params[:frontend_locale])
-              Globalize.locale = params.delete(:frontend_locale)
-            end
+            Globalize.locale = params.delete(:frontend_locale) if I18n::FRONTEND_LOCALES_KEYS.include?(params[:frontend_locale])
           end
 
           prepend_before_action :find_or_set_locale
