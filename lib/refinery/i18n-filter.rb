@@ -21,12 +21,11 @@ module RoutingFilter
     end
 
     def around_generate(params, &block)
-      locale = params.delete(:locale) || ::I18n.locale
+      locale = params.delete(:locale) || Globalize.locale
 
       yield.tap do |result|
         result = result.is_a?(Array) ? result.first : result
-        if locale != ::Refinery::I18n.default_frontend_locale &&
-           result !~ refinery_backend_regexp
+        if locale != ::Refinery::I18n.default_frontend_locale
           result.sub!(RESULT_SUB_REGEXP) { "#{$1}/#{locale}#{$2}" }
         end
       end
@@ -38,8 +37,5 @@ module RoutingFilter
       @@locales_regexp ||= %r{^/(#{::Refinery::I18n.frontend_locales.join('|')})(/|$)}
     end
 
-    def refinery_backend_regexp
-      @@refinery_backend_regexp ||= %r{^/(#{Refinery::Core.backend_route})}
-    end
   end
 end

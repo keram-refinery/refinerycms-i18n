@@ -45,14 +45,8 @@ module Refinery
 
         ::Refinery::AdminController.class_eval do
           def find_or_set_locale
-            ::I18n.locale = I18n.default_locale
-
-            if current_refinery_user
-              ::I18n.locale = current_refinery_user.locale
-              Globalize.locale = current_refinery_user.frontend_locale
-            end
-
-            Globalize.locale = params.delete(:frontend_locale) if I18n::FRONTEND_LOCALES_KEYS.include?(params[:frontend_locale])
+            Globalize.locale = ::I18n.locale
+            ::I18n.locale = current_refinery_user ? current_refinery_user.locale : I18n.default_locale
           end
 
           prepend_before_action :find_or_set_locale
