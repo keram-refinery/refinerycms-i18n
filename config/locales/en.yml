@@ -1,0 +1,6 @@
+en:
+  refinery:
+    plugins:
+      i18n:
+        title: I18n
+        description: Handle localization of the application
